@@ -1,6 +1,7 @@
 package com.red.ragconsultant.aiservice;
 
 import dev.langchain4j.service.spring.AiService;
+import reactor.core.publisher.Flux;
 
 /**
  * @author red
@@ -9,5 +10,6 @@ import dev.langchain4j.service.spring.AiService;
  */
 @AiService
 public interface ConsultantService {
-    public String chat(String message);
+//    public String chat(String message);
+    public Flux<String> chat(String message);
 }
