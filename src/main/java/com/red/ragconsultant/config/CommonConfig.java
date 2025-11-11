@@ -1,11 +1,13 @@
 package com.red.ragconsultant.config;
 
 import com.red.ragconsultant.aiservice.ConsultantService;
+import com.red.ragconsultant.repository.RedisChatMemoryStore;
 import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.service.AiServices;
+import dev.langchain4j.store.memory.chat.ChatMemoryStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +21,8 @@ import org.springframework.context.annotation.Configuration;
 public class CommonConfig {
     @Autowired
     private OpenAiChatModel model;
+    @Autowired
+    private RedisChatMemoryStore redisChatMemoryStore;
 
 //    @Bean
 //    public ConsultantService consultantService(){
@@ -44,6 +48,7 @@ public class CommonConfig {
                 return MessageWindowChatMemory.builder()
                         .id(memoryId)
                         .maxMessages(20)
+                        .chatMemoryStore(redisChatMemoryStore)
                         .build();
             }
         };
