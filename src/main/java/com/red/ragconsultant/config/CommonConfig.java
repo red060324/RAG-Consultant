@@ -2,6 +2,7 @@ package com.red.ragconsultant.config;
 
 import com.red.ragconsultant.aiservice.ConsultantService;
 import com.red.ragconsultant.repository.RedisChatMemoryStore;
+import dev.langchain4j.community.store.embedding.redis.RedisEmbeddingStore;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.DocumentSplitter;
 import dev.langchain4j.data.document.loader.ClassPathDocumentLoader;
@@ -38,6 +39,8 @@ public class CommonConfig {
     private RedisChatMemoryStore redisChatMemoryStore;
     @Autowired
     private EmbeddingModel embeddingModel;
+    @Autowired
+    private RedisEmbeddingStore redisEmbeddingStore;
 
 //    @Bean
 //    public ConsultantService consultantService(){
@@ -70,33 +73,33 @@ public class CommonConfig {
     }
 
     // 构建向量数据库操作对象
-    @Bean
+//    @Bean
     public EmbeddingStore store() {
         // 加载文档进内存
 //        List<Document> documents = ClassPathDocumentLoader.loadDocuments("content");
         List<Document> documents = ClassPathDocumentLoader.loadDocuments("content", new ApachePdfBoxDocumentParser());
 
-        // 构建向量数据库操作对象
-        InMemoryEmbeddingStore store = new InMemoryEmbeddingStore();
+        // 构建向量数据库操作对象 操作的是内存向量数据库
+//        InMemoryEmbeddingStore store = new InMemoryEmbeddingStore();
         // 构建文档分割器对象
         DocumentSplitter ds = DocumentSplitters.recursive(1000, 100);
 
 
         // 构建一个 EmbeddingStoreIngerstor 对象，完成对文档数据切割、向量化并存储到向量数据库中
         EmbeddingStoreIngestor ingestor = EmbeddingStoreIngestor.builder()
-                .embeddingStore(store)
+                .embeddingStore(redisEmbeddingStore)
                 .documentSplitter(ds)
                 .embeddingModel(embeddingModel)
                 .build();
         ingestor.ingest(documents);
-        return store;
+        return redisEmbeddingStore;
     }
 
     // 构建数据库检索对象
     @Bean
-    public ContentRetriever contentRetriever(EmbeddingStore store) {
+    public ContentRetriever contentRetriever() {
         return EmbeddingStoreContentRetriever.builder()
-                .embeddingStore(store)
+                .embeddingStore(redisEmbeddingStore)
                 .minScore(0.5)
                 .maxResults(3)
                 .embeddingModel(embeddingModel)
