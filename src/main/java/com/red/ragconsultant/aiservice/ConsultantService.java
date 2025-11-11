@@ -18,7 +18,8 @@ import reactor.core.publisher.Flux;
         streamingChatModel = "openAiStreamingChatModel", // 使用名为 openAiStreamingChatModel 的流式聊天模型 bean
 //        chatMemory = "chatMemory", // 使用名为 chatMemory 的聊天记忆 bean
         chatMemoryProvider = "chatMemoryProvider", // 配置会话记忆提供者对象
-        contentRetriever = "contentRetriever" // 向量数据库检索对象
+        contentRetriever = "contentRetriever", // 向量数据库检索对象
+        tools = "orderTool" // 工具方法所在的 bean 名称
 )
 public interface ConsultantService {
 //    public String chat(String message);
